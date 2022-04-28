@@ -34,9 +34,21 @@ def read_import_file():
             # to find links in import file
             elif re.search("[a-z|A-Z] - [a-z|A-Z] : [0-9]{1,3};", line):
                 number = int(line[12:len(line) - 2])
-                start = ([i for i in list_of_nodes if i.name == line[4]][0])
-                end = ([i for i in list_of_nodes if i.name == line[8]][0])
-                list_of_links.append(Link(start, end, number))
+                start_in_nodes = False
+                end_in_nodes = False
+                for node in list_of_nodes:
+                    if line[4] == node.name:
+                        start_in_nodes = True
+                    if line[8] == node.name:
+                        end_in_nodes = True
+                if start_in_nodes and end_in_nodes:
+                    start = ([i for i in list_of_nodes if i.name == line[4]][0])
+                    end = ([i for i in list_of_nodes if i.name == line[8]][0])
+                    list_of_links.append(Link(start, end, number))
+                else:
+                    print("Error: link contains node that has not been created")
+                    sys.exit()
+
         # add links to the node.list_of_links
         for node in list_of_nodes:
             for link in list_of_links:
